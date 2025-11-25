@@ -1,0 +1,72 @@
+services:
+    # Redis for caching
+    redis:
+        image: redis:alpine
+        container_name: midjourney-redis
+        ports:
+            - "${REDIS_PORT_HOST:-7400}:6379"
+        networks:
+            - network
+        restart: unless-stopped
+        volumes:
+            - ./database/redis_data:/data
+        healthcheck:
+            test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+            start_period: 30s
+        # Simple Redis configuration
+        command: redis-server --appendonly yes
+
+    # Telegram Bot
+    bot:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            # Use build args for cross-platform builds
+            args:
+                - BUILDKIT_INLINE_CACHE=1
+        image: midjourney:latest
+        container_name: midjourney-app
+        # Removed platform specification for cross-platform compatibility
+        environment:
+            DATABASE_URL: file:/app/data/data.db
+            REDIS_URL: redis://redis:6379
+            REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+            NODE_ENV: production
+            TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+            BUN_INSTALL_CACHE_DIR: /tmp/bun-cache
+        depends_on:
+            redis:
+                condition: service_healthy
+        networks:
+            - network
+        restart: unless-stopped
+        # Cross-platform volume mounts
+        volumes:
+            - ./logs:/app/logs:rw
+            - database_data:/app/data:rw
+            - ./.env:/app/.env:ro
+        # Security and performance optimizations
+        security_opt:
+            - no-new-privileges:true
+        read_only: false
+        tmpfs:
+            - /tmp:noexec,nosuid,size=500m
+        healthcheck:
+            test: ["CMD", "bun", "--print", "process.exit(0)"]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 30s
+
+volumes:
+    redis_data:
+        driver: local
+    database_data:
+        driver: local
+
+networks:
+    network:
+        driver: bridge

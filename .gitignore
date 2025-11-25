@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+
+# Bun
+bun.lockb
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.staging
+.env.test
+
+# Logs
+logs/
+*.log
+
+# Database
+database/data.db
+database/redis_data/
+
+# Build outputs
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+tmp/
+temp/
+.cache/
+*.tmp
+
+# Testing
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Docker
+.dockerignore

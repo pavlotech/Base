@@ -1,0 +1,37 @@
+{
+    "name": "@restaurantbot/bot",
+    "version": "1.0.0",
+    "description": "RestaurantBot Telegram Bot service",
+    "main": "dist/index.js",
+    "module": "index.ts",
+    "type": "module",
+    "prisma": {
+        "schema": "database/schema.prisma"
+    },
+    "scripts": {
+        "start": "bun index.ts",
+        "dev": "bun --watch index.ts",
+        "clean": "rm -rf dist",
+        "test": "bun test",
+        "lint": "bunx eslint . --ext .ts",
+        "format": "bunx prettier --write .",
+        "db:generate": "prisma generate",
+        "db:migrate": "prisma migrate dev",
+        "db:deploy": "prisma migrate deploy",
+        "db:push": "prisma db push",
+        "db:studio": "prisma studio",
+        "db:reset": "prisma migrate reset"
+    },
+    "dependencies": {
+        "@prisma/client": "6.17.1",
+        "dotenv": "^16.5.0",
+        "redis": "^5.0.1",
+        "telegraf": "^4.16.3"
+    },
+    "devDependencies": {
+        "@types/bun": "latest",
+        "bun": "^1.2.17",
+        "prisma": "^6.17.1",
+        "typescript": "^5.8.3"
+    }
+}

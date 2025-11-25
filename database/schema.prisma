@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = "file:./data.db"
+}
+
+model User {
+    id                String         @id @default(cuid())
+    telegram          Telegram?
+    subscription      Subscription?
+    role              String         @default("USER")
+    blocked           Boolean        @default(false)
+    email             String?        // User's email for payments
+    createdAt         DateTime       @default(now())
+    updatedAt         DateTime       @updatedAt
+
+    @@map("users")
+}
+
+model Telegram {
+    id                BigInt    @id
+    userId            String    @unique
+    username          String?
+    firstName         String?
+    lastName          String?
+    language          String    @default("en") // User's selected language (ru/en)
+    user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("telegrams")
+}
+
+model Subscription {
+    id                String    @id @default(cuid())
+    userId            String    @unique
+    expiresAt         DateTime?
+    lastResetDate     DateTime  @default(now())
+    requestsCount     Int       @default(0)
+    createdAt         DateTime  @default(now())
+    updatedAt         DateTime  @updatedAt
+    user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("subscriptions")
+}
+
+model Announcement {
+    id          String   @id @default(cuid())
+    title       String?
+    text        String
+    images      Image[]
+    buttons     Button[]
+    status      String   @default("draft") // draft, sent, scheduled
+    sentAt      DateTime?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@map("announcements")
+}
+
+model Image {
+    id             String       @id @default(cuid())
+    announcementId String
+    data           String       // base64 encoded image data
+    mimetype       String       // image mimetype (e.g., "image/jpeg", "image/png")
+    announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+
+    @@map("images")
+}
+
+model Button {
+    id             String       @id @default(cuid())
+    announcementId String
+    text           String       // button text
+    url            String       // button URL
+    announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+
+    @@map("buttons")
+}

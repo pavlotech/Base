@@ -1,0 +1,17 @@
+import { Context, Scenes as TelegrafScenes } from "telegraf";
+import { SceneContext, SceneContextScene } from "telegraf/typings/scenes";
+
+export interface IContext extends Context {
+    session: SessionData;
+    scene: SceneContextScene<SceneContext<SceneSessionData>, SceneSessionData>;
+}
+
+export interface SessionData extends TelegrafScenes.SceneSession<SceneSessionData> {
+
+}
+
+export interface SceneSessionData extends TelegrafScenes.SceneSessionData {
+    state: {
+        
+    };
+}
