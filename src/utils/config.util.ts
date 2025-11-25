@@ -1,11 +1,9 @@
 import { config, DotenvParseOutput } from "dotenv";
 import { existsSync } from "fs";
 import { IConfig } from "src/core/interfaces/config.interface";
-import appConfig from "app.config";
 
 export default class Config implements IConfig {
     private readonly envConfig: DotenvParseOutput;
-    private readonly appConfig: typeof appConfig;
 
     constructor() {
         const possiblePaths = [
@@ -27,7 +25,6 @@ export default class Config implements IConfig {
             : {};
 
         this.envConfig = envConfig;
-        this.appConfig = appConfig;
     }
 
     public get(key: string): string {
@@ -42,9 +39,5 @@ export default class Config implements IConfig {
         }
 
         throw new Error(`Environment variable ${key} not found in process.env or .env file`);
-    }
-
-    public get config() {
-        return this.appConfig;
     }
 }
