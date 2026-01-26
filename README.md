@@ -1,4 +1,4 @@
-# 🍽️ midjourneyBot
+# 🍽️ baseBot
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Bun](https://img.shields.io/badge/Bun-000?logo=bun&logoColor=white)](https://bun.sh/)
@@ -33,7 +33,7 @@ Telegram бот для автоматического подсчета кало�
 1. **Клонируйте репозиторий:**
 ```bash
 git clone <repository-url>
-cd midjourneyBot
+cd baseBot
 ```
 
 2. **Установите зависимости:**
@@ -135,7 +135,6 @@ npm run dev
 src/
 ├── application/          # Бизнес-логика
 │   ├── modules/         # Модули команд бота
-│   └── scenes/          # Сцены для сложных диалогов
 ├── core/                # Базовые классы и интерфейсы
 │   ├── classes/         # Базовые классы
 │   ├── enums/           # Перечисления

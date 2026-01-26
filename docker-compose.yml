@@ -2,7 +2,7 @@ services:
     # Redis for caching
     redis:
         image: redis:alpine
-        container_name: midjourney-redis
+        container_name: redis
         ports:
             - "${REDIS_PORT_HOST:-7400}:6379"
         networks:
@@ -27,8 +27,8 @@ services:
             # Use build args for cross-platform builds
             args:
                 - BUILDKIT_INLINE_CACHE=1
-        image: midjourney:latest
-        container_name: midjourney-app
+        image: base:latest
+        container_name: app
         # Removed platform specification for cross-platform compatibility
         environment:
             DATABASE_URL: file:/app/data/data.db

@@ -1,18 +1,14 @@
-import { IBaseDeps, IModuleDeps, ISceneDeps } from "src/core/interfaces/deps.interface";
+import { IBaseDeps, IModuleDeps } from "src/core/interfaces/deps.interface";
+import Module, { ModuleType } from "src/core/classes/module.class";
+import { ConfigType } from "src/core/interfaces/config.interface";
 import path from "path";
 import fs from "fs";
-import Module from "src/core/classes/module.class";
-import Scene from "src/core/classes/scene.class";
-import { Scenes } from "telegraf";
-import { ModuleType } from "src/core/enums/module.enum";
-import { Config } from "src/core/interfaces/config.interface";
 import config from "app.config";
 
 export default class Loader {
     private readonly deps: IBaseDeps;
-    private readonly config: Config;
+    private readonly config: ConfigType;
     private readonly modulesPath: string = path.join(process.cwd(), "src", "application", "modules");
-    private readonly scenesPath: string = path.join(process.cwd(), "src", "application", "scenes");
     private readonly suffix: string = ".ts";
 
     constructor(deps: IBaseDeps) {
@@ -28,10 +24,8 @@ export default class Loader {
             try {
                 const module = await import(file);
 
-                // Process all exports (including default and named exports)
                 const exportsToProcess = [];
 
-                // Check default export
                 if (module.default) {
                     if (module.default instanceof Module) {
                         exportsToProcess.push(module.default);
@@ -40,14 +34,12 @@ export default class Loader {
                     }
                 }
 
-                // Check named exports
                 for (const [key, value] of Object.entries(module)) {
                     if (key !== 'default' && value instanceof Module) {
                         exportsToProcess.push(value);
                     }
                 }
 
-                // Process all found modules
                 for (const moduleInstance of exportsToProcess) {
                     const moduleType = moduleInstance.getOptions().type || ModuleType.MODULE;
                     modules.push({ file, instance: moduleInstance, type: moduleType });
@@ -66,36 +58,12 @@ export default class Loader {
         for (const { file, instance: moduleInstance } of modules) {
             try {
                 moduleInstance.setDeps(this.deps as IModuleDeps);
-                moduleInstance.setConfig(this.config as Config);
+                moduleInstance.setConfig(this.config as ConfigType);
                 await moduleInstance.init();
             } catch (error) {
                 this.deps.logger.error(`Error initializing module from ${file}:`, error);
             }
         }
-    }
-
-    public async loadScenes(): Promise<Scenes.BaseScene<any>[]> {
-        const sceneFiles = this.getFiles(this.scenesPath, this.suffix);
-        const scenes: Scenes.BaseScene<any>[] = [];
-
-        for (const [index, file] of sceneFiles.entries()) {
-            try {
-                const module = await import(file);
-                if (module.default instanceof Scene) {
-                    const sceneInstance = module.default as Scene;
-                    const scene = new Scenes.BaseScene<any>(sceneInstance.name);
-                    const sceneDeps: ISceneDeps = { ...this.deps, scene };
-                    sceneInstance.setDeps(sceneDeps);
-                    sceneInstance.setConfig(this.config as Config);
-                    await sceneInstance.init();
-                    scenes.push(scene);
-                }
-            } catch (error) {
-                this.deps.logger.error(`Error loading scene from ${file}:`, error);
-            }
-        }
-
-        return scenes;
     }
 
     private getFiles(dir: string, suffix: string): string[] {

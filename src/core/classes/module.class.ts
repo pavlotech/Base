@@ -1,14 +1,14 @@
 import { IModuleDeps } from "src/core/interfaces/deps.interface";
 import { ModuleOptions } from "src/core/interfaces/module.interface.js";
 import { ModuleType } from 'src/core/enums/module.enum';
-import { Config } from "src/core/interfaces/config.interface";
+import { ConfigType } from "src/core/interfaces/config.interface";
 
 export default class Module {
-    private buildFn: (deps: IModuleDeps, config: Config) => Promise<void>;
+    private buildFn: (deps: IModuleDeps, config: ConfigType) => Promise<void>;
     private deps?: IModuleDeps;
-    private config?: Config;
+    private config?: ConfigType;
 
-    constructor(private readonly options: ModuleOptions, buildFn: (deps: IModuleDeps, config: Config) => Promise<void>) {
+    constructor(private readonly options: ModuleOptions, buildFn: (deps: IModuleDeps, config: ConfigType) => Promise<void>) {
         this.buildFn = buildFn;
     }
 
@@ -16,7 +16,7 @@ export default class Module {
         this.deps = deps;
     }
 
-    public setConfig(config: Config) {
+    public setConfig(config: ConfigType) {
         this.config = config;
     }
 
@@ -24,7 +24,7 @@ export default class Module {
         if (!this.deps) {
             throw new Error("Dependencies not installed");
         }
-        await this.buildFn(this.deps, this.config as Config);
+        await this.buildFn(this.deps, this.config as ConfigType);
     }   
 
     public getOptions(): ModuleOptions {

@@ -1,7 +1,6 @@
 /* import { config } from 'dotenv';
 import { join } from 'path';
 
-// Load environment variables
 config();
 
 export const prismaConfig = {

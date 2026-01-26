@@ -1,9 +1,9 @@
+import { CachedTimestamp, LogExtra, LoggerOptions } from 'src/core/interfaces/logger.interface';
+import { Color, Level } from 'src/core/enums/logger.enum'
 import fs from 'fs'
 import path from 'path'
 import util from 'util'
 import process from 'process'
-import { CachedTimestamp, LogExtra, LoggerOptions } from 'src/core/interfaces/logger.interface';
-import { Color, Level } from 'src/core/enums/logger.enum'
 
 class FileWriter {
     private currentLogFileName: string = '';
