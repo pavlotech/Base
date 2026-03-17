@@ -93,7 +93,10 @@ By default, Telegraf support is disabled in the base version for universality. T
      }
      ```
 4. **Configure App:**
-   In `internal/core/classes/app.class.ts`, add session and scene initialization (middleware) before loading modules:
+   In `internal/core/classes/app.class.ts`, add session and scene initialization (middleware) before loading modules. 
+   
+   Note: You also need to add `stage: { ttl: number }` to your config. The `ttl` (Time To Live) defines how long the scene remains active (in seconds) after being called; once it expires, the scene is closed.
+
    ```typescript
    const scenes = await this.loader.loadScenes();
    const stage = new Scenes.Stage(scenes, { ttl: config.stage.ttl });

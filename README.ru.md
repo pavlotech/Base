@@ -96,7 +96,10 @@ export default new Route(
      }
      ```
 4. **Настройте App:**
-   В `internal/core/classes/app.class.ts` добавьте инициализацию сессий и сцен (middleware) перед загрузкой модулей:
+   В `internal/core/classes/app.class.ts` добавьте инициализацию сессий и сцен (middleware) перед загрузкой модулей.
+   
+   Примечание: Также необходимо добавить `stage: { ttl: число }` в ваш конфиг. Параметр `ttl` (Time To Live) определяет время жизни сцены (в секундах) после вызова; по истечении этого времени сцена автоматически закрывается.
+
    ```typescript
    const scenes = await this.loader.loadScenes();
    const stage = new Scenes.Stage(scenes, { ttl: config.stage.ttl });
