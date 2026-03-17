@@ -26,25 +26,31 @@
 ## 🛠️ Как пользоваться архитектурой
 
 ### 1. Добавление новой команды (Модуля)
-Модули находятся в `internal/application/modules/`. Каждый модуль должен наследоваться от базового класса `Module`.
+Модули находятся в `internal/application/modules/`. Модуль создается путем создания нового экземпляра класса `Module`.
 
 ```typescript
 // internal/application/modules/ping.module.ts
-import { Module } from "@core/classes/module.class";
+import Module from "@core/classes/module.class";
 
-export default class PingModule extends Module {
-    constructor(deps: IBaseDeps) {
-        super(deps, "ping");
-    }
-
-    async init() {
-        this.ctx.bot.command("ping", (ctx) => ctx.reply("Pong!"));
-    }
-}
+export default new Module(async (deps, config) => {
+    deps.bot.command("ping", (ctx) => ctx.reply("Pong!"));
+});
 ```
 
 ### 2. Создание роута (Route)
-Роуты используются для обработки специфических путей в Telegram Web App или API. Находятся в `internal/application/routes/`.
+Роуты используются для обработки HTTP-запросов (например, для Web App). Находятся в `internal/application/routes/`.
+
+```typescript
+// internal/application/routes/web-app.route.ts
+import Route from "@core/classes/route.class";
+
+export default new Route(
+    { path: "/api/status", method: "GET" },
+    async (deps, request, config) => {
+        return Response.json({ status: "ok" });
+    }
+);
+```
 
 ### 3. Использование сервисов
 Сервисы инжектируются в приложение через `IBaseDeps` в `cmd/main.ts`. Чтобы добавить новый сервис:
