@@ -78,10 +78,32 @@ export default new Route(
    - `internal/core/interfaces/context.interface.ts.disabled`
    - `internal/core/interfaces/scene.interface.ts.disabled`
 3. **Раскомментируйте код:**
-   - В `internal/core/classes/loader.class.ts` раскомментируйте метод `loadScenes`.
-   - В `internal/core/interfaces/deps.interface.ts` раскомментируйте импорты Telegraf и интерфейс `ISceneDeps`.
+   - В `internal/core/interfaces/deps.interface.ts` раскомментируйте импорты Telegraf и интерфейс `ISceneDeps`:
+     ```typescript
+     import { Telegraf, Scenes } from "telegraf";
+     // ...
+     export interface ISceneDeps extends IBaseDeps {
+         scene: Scenes.BaseScene<any>;
+     }
+     ```
+   - В `internal/core/classes/loader.class.ts` раскомментируйте метод `loadScenes`:
+     ```typescript
+     public async loadScenes(): Promise<Scenes.BaseScene<any>[]> {
+         const sceneFiles = this.getFiles(this.scenesPath, this.suffix);
+         const scenes: Scenes.BaseScene<any>[] = [];
+         // ...
+         return scenes;
+     }
+     ```
 4. **Настройте App:**
-   В `internal/core/classes/app.class.ts` добавьте инициализацию сессий и сцен (middleware) перед загрузкой модулей.
+   В `internal/core/classes/app.class.ts` добавьте инициализацию сессий и сцен (middleware) перед загрузкой модулей:
+   ```typescript
+   const scenes = await this.loader.loadScenes();
+   const stage = new Scenes.Stage(scenes, { ttl: config.stage.ttl });
+   
+   this.deps.bot.use(session());
+   this.deps.bot.use(stage.middleware());
+   ```
 
 ## 🚀 Быстрый старт
 

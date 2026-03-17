@@ -75,10 +75,32 @@ By default, Telegraf support is disabled in the base version for universality. T
    - `internal/core/interfaces/context.interface.ts.disabled`
    - `internal/core/interfaces/scene.interface.ts.disabled`
 3. **Uncomment code:**
-   - In `internal/core/classes/loader.class.ts`, uncomment the `loadScenes` method.
-   - In `internal/core/interfaces/deps.interface.ts`, uncomment Telegraf imports and the `ISceneDeps` interface.
+   - In `internal/core/interfaces/deps.interface.ts`, uncomment Telegraf imports and the `ISceneDeps` interface:
+     ```typescript
+     import { Telegraf, Scenes } from "telegraf";
+     // ...
+     export interface ISceneDeps extends IBaseDeps {
+         scene: Scenes.BaseScene<any>;
+     }
+     ```
+   - In `internal/core/classes/loader.class.ts`, uncomment the `loadScenes` method:
+     ```typescript
+     public async loadScenes(): Promise<Scenes.BaseScene<any>[]> {
+         const sceneFiles = this.getFiles(this.scenesPath, this.suffix);
+         const scenes: Scenes.BaseScene<any>[] = [];
+         // ...
+         return scenes;
+     }
+     ```
 4. **Configure App:**
-   In `internal/core/classes/app.class.ts`, add session and scene initialization (middleware) before loading modules.
+   In `internal/core/classes/app.class.ts`, add session and scene initialization (middleware) before loading modules:
+   ```typescript
+   const scenes = await this.loader.loadScenes();
+   const stage = new Scenes.Stage(scenes, { ttl: config.stage.ttl });
+   
+   this.deps.bot.use(session());
+   this.deps.bot.use(stage.middleware());
+   ```
 
 ## 🚀 Quick Start
 
