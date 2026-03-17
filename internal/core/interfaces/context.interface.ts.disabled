@@ -1,4 +1,4 @@
-/* import { Context, Scenes as TelegrafScenes } from "telegraf";
+import { Context, Scenes as TelegrafScenes } from "telegraf";
 import { SceneContext, SceneContextScene } from "telegraf/scenes";
 
 export interface IContext extends Context {
@@ -13,4 +13,3 @@ export interface SessionData extends TelegrafScenes.SceneSession<SceneSessionDat
 export interface SceneSessionData extends TelegrafScenes.SceneSessionData {
     state: {};
 }
- */

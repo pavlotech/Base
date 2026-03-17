@@ -1,4 +1,4 @@
-/* import { ISceneDeps } from "@core/interfaces/deps.interface";
+import { ISceneDeps } from "@core/interfaces/deps.interface";
 import { SceneOptions } from "@core/interfaces/scene.interface";
 import { ConfigType } from "@core/interfaces/config.interface";
 
@@ -30,4 +30,4 @@ export default class Scene {
         }
         await this.buildFn(this.deps, this.config as ConfigType);
     }
-} */
+}
