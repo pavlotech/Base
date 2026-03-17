@@ -2,7 +2,7 @@ services:
     # Redis for caching
     redis:
         image: redis:alpine
-        container_name: midjourney-redis
+        container_name: application-redis
         ports:
             - "${REDIS_PORT_HOST:-7400}:6379"
         networks:
@@ -19,23 +19,22 @@ services:
         # Simple Redis configuration
         command: redis-server --appendonly yes
 
-    # Telegram Bot
-    bot:
+    # Application
+    application:
         build:
             context: .
             dockerfile: Dockerfile
             # Use build args for cross-platform builds
             args:
                 - BUILDKIT_INLINE_CACHE=1
-        image: midjourney:latest
-        container_name: midjourney-app
+        image: application:latest
+        container_name: application
         # Removed platform specification for cross-platform compatibility
         environment:
             DATABASE_URL: file:/app/data/data.db
             REDIS_URL: redis://redis:6379
             REDIS_PASSWORD: ${REDIS_PASSWORD:-}
             NODE_ENV: production
-            TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
             BUN_INSTALL_CACHE_DIR: /tmp/bun-cache
         depends_on:
             redis:

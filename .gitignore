@@ -55,3 +55,6 @@ playwright/.cache/
 
 # Docker
 .dockerignore
+
+# Agents
+.agents/
