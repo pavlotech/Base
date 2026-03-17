@@ -5,43 +5,55 @@
 [![Prisma](https://img.shields.io/badge/Prisma-3982CE?logo=Prisma&logoColor=white)](https://www.prisma.io/)
 [![Redis](https://img.shields.io/badge/Redis-DC382D?logo=redis&logoColor=white)](https://redis.io/)
 
-Современный шаблон для Telegram ботов на основе Bun, TypeScript и модульной архитектуры, вдохновленной лучшими практиками Go.
+Универсальный фреймворк для создания ботов (Telegram и др.), веб-бэкендов или полноценных монолитов. Построен на Bun, TypeScript и модульной архитектуре, вдохновленной лучшими практиками Go.
 
 ## 🏗️ Архитектура проекта
 
-Проект использует четкое разделение ответственности, что позволяет легко масштабировать и поддерживать код.
+Проект использует четкое разделение ответственности. Фреймворк позволяет объединять логику чат-ботов и HTTP-сервера в одном приложении.
 
 ### Структура каталогов
 
-- `cmd/` — Точки входа в приложение (Main entry points).
-- `internal/` — Приватный код приложения, который не должен импортироваться внешними проектами.
+- `cmd/` — Точки входа в приложение.
+- `internal/` — Приватный код приложения.
     - `core/` — Базовые классы (`App`, `Loader`, `Router`), интерфейсы и системные перечисления.
     - `application/` — Бизнес-логика: модули, роуты, события и сцены.
-    - `services/` — Специализированные сервисы (Gemini AI, Calorie service и др.).
+    - `services/` — Специализированные сервисы (AI, бизнес-логика и др.).
     - `storage/` — Логика работы с хранилищами данных (Prisma, Redis).
-- `pkg/` — Публичные утилиты и библиотеки, которые могут быть выделены в отдельные пакеты.
-- `config/` — Конфигурационные файлы и инициализация окружения.
+- `pkg/` — Публичные утилиты и библиотеки.
+- `config/` — Конфигурационные файлы.
 - `database/` — Схемы БД (Prisma) и миграции.
 
 ## 🛠️ Как пользоваться архитектурой
 
-### 1. Добавление новой команды (Модуля)
-Модули находятся в `internal/application/modules/`. Модуль создается путем создания нового экземпляра класса `Module`.
+### 1. Добавление модуля (Module)
+Модули — это строительные блоки приложения. Они загружаются автоматически. События (`ModuleType.EVENT`) загружаются в последнюю очередь, чтобы гарантировать готовность всех зависимостей.
 
 ```typescript
-// internal/application/modules/ping.module.ts
-import Module from "@core/classes/module.class";
+// internal/application/modules/example.module.ts
+import Module, { ModuleType } from "@core/classes/module.class";
 
-export default new Module(async (deps, config) => {
-    deps.bot.command("ping", (ctx) => ctx.reply("Pong!"));
+export default new Module({ type: ModuleType.MODULE }, async (deps, config) => {
+    // Ваша логика здесь
 });
 ```
 
-### 2. Создание роута (Route)
-Роуты используются для обработки HTTP-запросов (например, для Web App). Находятся в `internal/application/routes/`.
+### 2. Создание сцены (Scene)
+Сцены используются для сложных диалогов в ботах. В параметрах передается `name`, а внутри доступны методы Telegraf и `deps.scene`.
 
 ```typescript
-// internal/application/routes/web-app.route.ts
+// internal/application/scenes/order.scene.ts
+export default new Scene({ name: "order_scene" }, async (deps, config) => {
+    deps.scene.enter(async (ctx) => {
+        await ctx.reply("Что вы хотите заказать?");
+    });
+    // Обработка шагов сцены
+});
+```
+
+### 3. Создание роута (Route)
+Для создания API или бэкенда для сайта используйте роуты.
+
+```typescript
 import Route from "@core/classes/route.class";
 
 export default new Route(
