@@ -20,7 +20,7 @@ export interface IBaseDeps {
     };
 }
 
-export interface IModuleDeps extends IBaseDeps {}
+export interface IModuleDeps extends IBaseDeps { }
 
 /* export interface ISceneDeps extends IBaseDeps {
     scene: Scenes.BaseScene<any>;

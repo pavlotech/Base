@@ -64,6 +64,25 @@ export default new Route(
 );
 ```
 
+## 🤖 Using Telegram Bot
+
+By default, Telegraf support is disabled in the base version for universality. To activate it:
+
+1. **Install the library:**
+   ```bash
+   bun add telegraf
+   ```
+2. **Activate core files:**
+   Rename files by removing the `.disabled` extension:
+   - `internal/core/classes/scene.class.ts.disabled`
+   - `internal/core/interfaces/context.interface.ts.disabled`
+   - `internal/core/interfaces/scene.interface.ts.disabled`
+3. **Uncomment code:**
+   - In `internal/core/classes/loader.class.ts`, uncomment the `loadScenes` method.
+   - In `internal/core/interfaces/deps.interface.ts`, uncomment Telegraf imports and the `ISceneDeps` interface.
+4. **Configure App:**
+   In `internal/core/classes/app.class.ts`, add session and scene initialization (middleware) before loading modules.
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -105,24 +124,6 @@ BOT_TOKEN=your_production_bot_token
 GEMINI_API_KEY=your_production_gemini_key
 REDIS_URL=redis://your-redis-server:6379
 ```
-
-## 🔒 Security
-
-- Validation of all user data
-- File size limits for uploads
-- User data isolation
-- Logging of all operations
-- Timeouts to prevent hanging
-
-## 🔧 Technologies
-
-- **Runtime**: [Bun](https://bun.sh/)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Bot Framework**: [Telegraf](https://telegraf.js.org/)
-- **AI**: [Google Gemini](https://ai.google.dev/)
-- **Database**: [Prisma ORM](https://www.prisma.io/)
-- **Cache**: [Redis](https://redis.io/)
-- **Containerization**: [Docker](https://www.docker.com/)
 
 ## 📄 License
 
