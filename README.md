@@ -59,50 +59,11 @@ import Route from "@core/classes/route.class";
 export default new Route(
     { path: "/api/status", method: "GET" },
     async (deps, request, config) => {
-        return Response.json({ status: "ok" });
-    }
-);
-```
-
-### 3. Использование сервисов
-Сервисы инжектируются в приложение через `IBaseDeps` в `cmd/main.ts`. Чтобы добавить новый сервис:
-1. Опишите его в `internal/services/`.
-2. Добавьте его в интерфейс `IBaseDeps` в `internal/core/interfaces/deps.interface.ts`.
-3. Инициализируйте и передайте его в `cmd/main.ts`.
-
-## 🚀 Быстрый старт
-
-### Предварительные требования
-- [Bun](https://bun.sh/) runtime
-- Redis
-- PostgreSQL/SQLite (через Prisma)
-
-### Установка
-1. Клонируйте репозиторий.
-2. Установите зависимости: `bun install`.
-3. Настройте `.env` (используя `env.example`).
-4. Подготовьте БД: `bun run db:migrate && bun run db:generate`.
-5. Запустите: `bun run dev`.
-
-## 📈 Список скриптов
-
-- `bun run dev` — Запуск в режиме разработки с hot-reload.
-- `bun run start` — Запуск в production.
-- `bun run db:*` — Команды для работы с Prisma (migrate, generate, studio).
-- `bun run format` — Форматирование кода через Prettier.
-
-## 🐳 Docker
+        return Response.json({ status: "o## 🐳 Docker
 Проект включает `Dockerfile` и `docker-compose.yml` для быстрого развертывания в контейнерах.
 
 ```bash
-docker-compose up -d
-```
-
----
-© 2026 Pavlotech. MIT License.
-acker-bot .
-
-# Запуск с docker-compose
+# Запуск через docker-compose
 docker-compose up -d
 
 # Логи
@@ -122,17 +83,28 @@ REDIS_URL=redis://your-redis-server:6379
 ## 🔒 Безопасность
 
 - Валидация всех пользовательских данных
-- Ограничения на размер загружаемых файлов (20MB для Gemini)
+- Ограничения на размер загружаемых файлов
 - Изоляция данных пользователей
 - Логирование всех операций
 - Таймауты для предотвращения зависания
 
-## 📊 Мониторинг
+## 🔧 Технологии
 
-- Структурированное логирование
-- Отслеживание ошибок API
-- Метрики использования команд
-- Мониторинг уверенности AI анализа
+- **Runtime**: [Bun](https://bun.sh/) — быстрый JavaScript runtime
+- **Language**: [TypeScript](https://www.typescriptlang.org/) — типизированный JavaScript
+- **Bot Framework**: [Telegraf](https://telegraf.js.org/) — фреймворк для Telegram ботов
+- **AI**: [Google Gemini](https://ai.google.dev/) — анализ изображений и видео
+- **Database**: [Prisma ORM](https://www.prisma.io/)
+- **Cache**: [Redis](https://redis.io/) — in-memory хранилище
+- **Containerization**: [Docker](https://www.docker.com/)
+
+## 📄 Лицензия
+
+Этот проект распространяется под лицензией MIT. Подробности в файле [LICENSE](LICENSE).
+
+---
+© 2026 Pavlotech. MIT License.
+�ности AI анализа
 
 ## 🔧 Технологии
 
