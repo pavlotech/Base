@@ -1,14 +1,15 @@
-import { Logger } from "@utils/logger.util";
+
 import { IConfig } from "@core/interfaces/config.interface";
 import { IRedis } from "@core/interfaces/redis.interface";
 import { IDatabase } from "@core/interfaces/database.interface";
 import { ILocale } from "@core/interfaces/locale.interface";
+import { ILogger } from "./logger.interface";
 /* import { Telegraf, Scenes } from "telegraf"; */
 /* import { IContext } from "@core/interfaces/context.interface"; */
 /* import { IUserService } from "@core/interfaces/user.interface"; */
 
 export interface IBaseDeps {
-    logger: Logger;
+    logger: ILogger;
     config: IConfig;
     storage: {
         database: IDatabase;
