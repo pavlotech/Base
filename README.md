@@ -56,12 +56,9 @@ Use routes to create an API or a backend for a website.
 ```typescript
 import Route from "@core/classes/route.class";
 
-export default new Route(
-    { path: "/api/status", method: "GET" },
-    async (deps, request, config) => {
-        return Response.json({ status: "ok" });
-    }
-);
+export default new Route({ path: "/api/status", method: "GET" }, async (deps, request, config) => {
+    return Response.json({ status: "ok" });
+});
 ```
 
 ## 🚀 Quick Start
