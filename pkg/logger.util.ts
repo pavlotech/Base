@@ -136,26 +136,31 @@ export default class Logger implements ILogger {
         this.emit(Level.ERROR, data);
     }
 
+    private formatItem(x: any, colorize: boolean): string {
+        if (x instanceof Error) {
+            return x.stack || (x.name ? `${x.name}: ${x.message}` : x.message) || String(x);
+        }
+        if (x && typeof x === "object") {
+            if (typeof x.name === "string" && typeof x.message === "string") {
+                return x.stack || `${x.name}: ${x.message}`;
+            }
+            return util.inspect(x, {
+                depth: null,
+                colors: colorize,
+            });
+        }
+        return String(x);
+    }
+
     private formatMessageForFile(data: any[]): string {
         return data
-            .map((x) =>
-                typeof x === "object"
-                    ? util.inspect(x, { depth: null, colors: false })
-                    : String(x),
-            )
+            .map((x) => this.formatItem(x, false))
             .join(" ");
     }
 
     private formatMessageForConsole(data: any[]): string {
         return data
-            .map((x) =>
-                typeof x === "object"
-                    ? util.inspect(x, {
-                        depth: null,
-                        colors: this.options.colorizeObjects,
-                    })
-                    : String(x),
-            )
+            .map((x) => this.formatItem(x, this.options.colorizeObjects ?? false))
             .join(" ");
     }
 }

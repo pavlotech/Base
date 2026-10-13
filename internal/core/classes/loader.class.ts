@@ -1,6 +1,7 @@
 import { IBaseDeps, IModuleDeps } from "@core/interfaces/deps.interface";
 import path from "path";
 import fs from "fs";
+import { pathToFileURL } from "url";
 import Module from "@core/classes/module.class";
 import { ModuleType } from "@core/enums/module.enum";
 import { ConfigType } from "@core/interfaces/config.interface";
@@ -38,22 +39,43 @@ export default class Loader {
     }
 
     public async loadModules(): Promise<void> {
-        const moduleFiles = this.getFiles(this.modulesPath, this.suffix);
+        let loadedItems: { file: string; module: any }[] = [];
+
+        try {
+            // Check if bundled manifest is available (standalone binary mode)
+            // @ts-ignore - internal/generated/manifest is generated dynamically before build
+            const manifest = await import("../../generated/manifest");
+            if (manifest && Array.isArray(manifest.bundledModules) && manifest.bundledModules.length > 0) {
+                loadedItems = manifest.bundledModules;
+            }
+        } catch {
+            // Manifest not found or cannot be imported - fallback to dynamic filesystem scan
+        }
+
+        if (loadedItems.length === 0) {
+            const moduleFiles = this.getFiles(this.modulesPath, this.suffix);
+            for (const file of moduleFiles) {
+                try {
+                    const mod = await import(pathToFileURL(file).href);
+                    loadedItems.push({ file, module: mod });
+                } catch (error) {
+                    this.deps.logger.error(`Error loading module from ${file}:`, error);
+                }
+            }
+        }
+
         const modules: { file: string; instance: Module; type: string }[] = [];
 
-        for (const file of moduleFiles) {
+        for (const { file, module } of loadedItems) {
             try {
-                const module = await import(file);
-                const exportsToProcess = [];
+                const exportsToProcess: Module[] = [];
 
                 if (module.default) {
                     if (module.default instanceof Module) {
                         exportsToProcess.push(module.default);
                     } else if (
                         Array.isArray(module.default) &&
-                        module.default.every(
-                            (item: any) => item instanceof Module,
-                        )
+                        module.default.every((item: any) => item instanceof Module)
                     ) {
                         exportsToProcess.push(...module.default);
                     }
@@ -66,8 +88,7 @@ export default class Loader {
                 }
 
                 for (const moduleInstance of exportsToProcess) {
-                    const moduleType =
-                        moduleInstance.getOptions().type || ModuleType.MODULE;
+                    const moduleType = moduleInstance.getOptions().type || ModuleType.MODULE;
                     modules.push({
                         file,
                         instance: moduleInstance,
@@ -75,18 +96,13 @@ export default class Loader {
                     });
                 }
             } catch (error) {
-                this.deps.logger.error(
-                    `Error loading module from ${file}:`,
-                    error,
-                );
+                this.deps.logger.error(`Error processing module from ${file}:`, error);
             }
         }
 
         modules.sort((a, b) => {
-            if (a.type === ModuleType.EVENT && b.type !== ModuleType.EVENT)
-                return 1;
-            if (a.type !== ModuleType.EVENT && b.type === ModuleType.EVENT)
-                return -1;
+            if (a.type === ModuleType.EVENT && b.type !== ModuleType.EVENT) return 1;
+            if (a.type !== ModuleType.EVENT && b.type === ModuleType.EVENT) return -1;
             return 0;
         });
 
@@ -96,10 +112,7 @@ export default class Loader {
                 moduleInstance.setConfig(this.config);
                 await moduleInstance.init();
             } catch (error) {
-                this.deps.logger.error(
-                    `Error initializing module from ${file}:`,
-                    error,
-                );
+                this.deps.logger.error(`Error initializing module from ${file}:`, error);
             }
         }
     }
@@ -110,7 +123,7 @@ export default class Loader {
 
         for (const [index, file] of sceneFiles.entries()) {
             try {
-                const module = await import(file);
+                const module = await import(pathToFileURL(file).href);
                 if (module.default instanceof Scene) {
                     const sceneInstance = module.default as Scene;
                     const scene = new Scenes.BaseScene<any>(sceneInstance.name);
@@ -132,11 +145,32 @@ export default class Loader {
     } */
 
     public async loadRoutes(router: Router): Promise<void> {
-        const routeFiles = this.getFiles(this.routesPath, this.suffix);
+        let loadedItems: { file: string; module: any }[] = [];
 
-        for (const file of routeFiles) {
+        try {
+            // @ts-ignore - internal/generated/manifest is generated dynamically before build
+            const manifest = await import("../../generated/manifest");
+            if (manifest && Array.isArray(manifest.bundledRoutes) && manifest.bundledRoutes.length > 0) {
+                loadedItems = manifest.bundledRoutes;
+            }
+        } catch {
+            // Manifest not found or cannot be imported - fallback to dynamic filesystem scan
+        }
+
+        if (loadedItems.length === 0) {
+            const routeFiles = this.getFiles(this.routesPath, this.suffix);
+            for (const file of routeFiles) {
+                try {
+                    const mod = await import(pathToFileURL(file).href);
+                    loadedItems.push({ file, module: mod });
+                } catch (error) {
+                    this.deps.logger.error(`Error loading route from ${file}:`, error);
+                }
+            }
+        }
+
+        for (const { file, module } of loadedItems) {
             try {
-                const module = await import(file);
                 const routeInstance = module.default;
 
                 if (routeInstance && (routeInstance instanceof Route || typeof routeInstance.init === "function")) {
@@ -151,10 +185,7 @@ export default class Loader {
                     this.deps.logger.warn(`File ${file} does not export a valid Route instance`);
                 }
             } catch (error) {
-                this.deps.logger.error(
-                    `Error loading route from ${file}:`,
-                    error,
-                );
+                this.deps.logger.error(`Error loading route from ${file}:`, error);
             }
         }
     }

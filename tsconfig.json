@@ -27,37 +27,36 @@
         /* Modules */
         "module": "esnext", /* Specify what module code is generated. */
         "moduleResolution": "bundler", /* Specify the root folder within your source files. */
-        "baseUrl": "./", /* Specify the base directory to resolve non-relative module names. */
         "paths": {
             "@core/*": [
-                "internal/core/*"
+                "./internal/core/*"
             ],
             "@modules/*": [
-                "internal/application/modules/*"
+                "./internal/application/modules/*"
             ],
             "@routes/*": [
-                "internal/application/routes/*"
+                "./internal/application/routes/*"
             ],
             "@scenes/*": [
-                "internal/application/scenes/*"
+                "./internal/application/scenes/*"
             ],
             "@services/*": [
-                "internal/services/*"
+                "./internal/services/*"
             ],
             "@storage/*": [
-                "internal/storage/*"
+                "./internal/storage/*"
             ],
             "@pkg/*": [
-                "pkg/*"
+                "./pkg/*"
             ],
             "@config": [
-                "config/index.ts"
+                "./config/index.ts"
             ],
             "@config/*": [
-                "config/*"
+                "./config/*"
             ],
             "@utils/*": [
-                "pkg/*"
+                "./pkg/*"
             ]
         }, /* Specify a set of entries that re-map imports to additional lookup locations. */
         // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */

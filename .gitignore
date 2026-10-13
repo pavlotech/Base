@@ -22,6 +22,7 @@ database/redis_data/
 # Build outputs
 dist/
 build/
+internal/generated/
 
 # IDE
 .vscode/

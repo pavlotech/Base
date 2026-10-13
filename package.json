@@ -11,7 +11,10 @@
     "scripts": {
         "start": "bun cmd/main.ts",
         "dev": "bun --watch cmd/main.ts",
-        "clean": "rm -rf dist",
+        "prebuild": "bun scripts/generate-manifest.ts",
+        "build": "bun run prebuild && bun build cmd/main.ts --outdir dist",
+        "build:compile": "bun run prebuild && bun build --compile cmd/main.ts --outfile dist/main.exe",
+        "clean": "rm -rf dist internal/generated",
         "test": "bun test",
         "lint": "bunx eslint . --ext .ts",
         "format": "bunx prettier --write .",
@@ -31,7 +34,7 @@
         "@types/bun": "^1.3.9",
         "bun": "^1.3.9",
         "prisma": "^6.0.0",
-        "typescript": "^5.9.3"
+        "typescript": "^7.0.2"
     },
     "private": true
 }
